@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store Item</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 100px;
+      background: #f4f4f4;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Store Your Item</h1>
+  <button onclick="storeItem()">Generate Token</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function storeItem() {
+      const res = await fetch('http://localhost:3000/api/store', {
+        method: 'POST'
+      });
+
+      const data = await res.json();
+
+      document.getElementById('result').innerHTML =
+        `<b>Token:</b> ${data.tokenId}<br>
+         <b>PIN:</b> ${data.pin}<br>
+         <b>Rack:</b> ${data.rackNumber}`;
+    }
+  </script>
+
+</body>
+</html>

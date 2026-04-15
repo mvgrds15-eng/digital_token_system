@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Retrieve Item</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 100px;
+      background: #f4f4f4;
+    }
+    input {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background: blue;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Retrieve Your Item</h1>
+
+  <input id="token" placeholder="Enter Token ID"><br>
+  <input id="pin" placeholder="Enter PIN"><br>
+
+  <button onclick="retrieveItem()">Retrieve</button>
+
+  <h2 id="result"></h2>
+
+  <script>
+    async function retrieveItem() {
+      const tokenId = document.getElementById('token').value;
+      const pin = document.getElementById('pin').value;
+
+      const res = await fetch('http://localhost:3000/api/retrieve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tokenId, pin })
+      });
+
+      const data = await res.json();
+
+      document.getElementById('result').innerText =
+        data.rackNumber ? `Go to Rack: ${data.rackNumber}` : data.message;
+    }
+  </script>
+
+</body>
+</html>
