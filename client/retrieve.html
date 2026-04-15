@@ -39,7 +39,7 @@
       const tokenId = document.getElementById('token').value;
       const pin = document.getElementById('pin').value;
 
-      const res = await fetch('http://localhost:3000/api/retrieve', {
+      const res = await fetch('https://digital-token-system.onrender.com/api/retrieve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tokenId, pin })
