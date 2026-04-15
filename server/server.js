@@ -6,7 +6,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// IMPORTANT FIX 👇
+// ✅ ADD THIS LINE
+const tokenRoutes = require('./routes/tokenRoutes');
+app.use('/api', tokenRoutes);
+
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
