@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Deposit Item</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+text-align:center;
+padding-top:60px;
+}
+
+.card{
+width:350px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.15);
+}
+
+button{
+padding:12px 20px;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.token{
+font-size:28px;
+color:green;
+font-weight:bold;
+}
+
+.rack{
+font-size:22px;
+color:blue;
+font-weight:bold;
+}
+
+a{
+display:block;
+margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>📦 Deposit Item</h1>
+
+<button onclick="depositItem()">
+Generate Token
+</button>
+
+<div id="result"></div>
+
+<a href="index.html">
+⬅ Back Home
+</a>
+
+</div>
+
+<script>
+
+const API =
+"https://digital-token-system.onrender.com/api";
+
+async function depositItem(){
+
+const response =
+await fetch(`${API}/store`,{
+method:"POST"
+});
+
+const data =
+await response.json();
+
+document.getElementById("result").innerHTML =
+
+`
+<p>Your Token</p>
+
+<div class="token">
+${data.tokenId}
+</div>
+
+<p>Allocated Rack</p>
+
+<div class="rack">
+${data.rackNumber}
+</div>
+
+<br>
+
+<button onclick="copyToken('${data.tokenId}')">
+Copy Token
+</button>
+`;
+
+}
+
+function copyToken(token){
+
+navigator.clipboard.writeText(token);
+
+alert("Token Copied");
+
+}
+
+</script>
+
+</body>
+</html>
