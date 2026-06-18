@@ -10,10 +10,12 @@ font-family:Arial;
 background:#f4f4f4;
 text-align:center;
 padding-top:60px;
+margin:0;
 }
 
 .card{
-width:350px;
+width:90%;
+max-width:400px;
 margin:auto;
 background:white;
 padding:25px;
@@ -26,12 +28,21 @@ padding:12px 20px;
 font-size:16px;
 cursor:pointer;
 margin-top:10px;
+border:none;
+border-radius:6px;
+background:#007bff;
+color:white;
+}
+
+button:hover{
+opacity:0.9;
 }
 
 .token{
 font-size:28px;
 color:green;
 font-weight:bold;
+word-break:break-word;
 }
 
 .rack{
@@ -43,6 +54,7 @@ font-weight:bold;
 a{
 display:block;
 margin-top:20px;
+text-decoration:none;
 }
 
 </style>
@@ -81,6 +93,14 @@ method:"POST"
 const data =
 await response.json();
 
+if(data.message){
+
+document.getElementById("result").innerHTML =
+`<h3>${data.message}</h3>`;
+
+return;
+}
+
 document.getElementById("result").innerHTML =
 
 `
@@ -99,7 +119,17 @@ ${data.rackNumber}
 <br>
 
 <button onclick="copyToken('${data.tokenId}')">
-Copy Token
+📋 Copy Token
+</button>
+
+<br><br>
+
+<button onclick="
+downloadReceipt(
+'${data.tokenId}',
+'${data.rackNumber}'
+)">
+📄 Download Receipt
 </button>
 `;
 
@@ -109,7 +139,67 @@ function copyToken(token){
 
 navigator.clipboard.writeText(token);
 
-alert("Token Copied");
+alert("Token Copied Successfully");
+
+}
+
+function downloadReceipt(tokenId, rackNumber){
+
+const now = new Date();
+
+const receipt = `
+
+SMART DIGITAL CLOAKROOM MANAGEMENT SYSTEM
+
+========================================
+
+RECEIPT
+
+Token ID:
+${tokenId}
+
+Allocated Rack:
+${rackNumber}
+
+Issued On:
+${now.toLocaleString()}
+
+========================================
+
+IMPORTANT:
+
+• Keep this token safe.
+
+• You must provide this token while
+  collecting your item.
+
+• Do not share the token with others.
+
+========================================
+
+Thank You
+
+`;
+
+const blob = new Blob(
+[receipt],
+{ type: "text/plain" }
+);
+
+const link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+`${tokenId}_receipt.txt`;
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
 
 }
 
