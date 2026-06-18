@@ -4,36 +4,17 @@ const Token = require('../models/token');
 
 // Available racks
 const racks = [
-  "A1", "A2", "A3", "A4", "A5",
-  "B1", "B2", "B3", "B4", "B5"
+  "A1", "A2", "A3", "A4",
+  "B1", "B2", "B3", "B4",
+  "C1", "C2"
 ];
 
-// --------------------
+// ====================
 // Deposit Item
-// --------------------
+// ====================
 router.post('/store', async (req, res) => {
-
   try {
 
-    // Find occupied racks
-    const occupied = await Token.find({ status: "stored" });
-
-    const occupiedRacks = occupied.map(
-      item => item.rackNumber
-    );
-
-    // Find first available rack
-    const availableRack = racks.find(
-      rack => !occupiedRacks.includes(rack)
-    );
-
-    if (!availableRack) {
-      return res.status(400).json({
-        message: "No racks available"
-      });
-    }
-
-    // Generate unique token
     const tokenId =
       "DT-" +
       Math.random()
@@ -41,69 +22,68 @@ router.post('/store', async (req, res) => {
         .substring(2, 8)
         .toUpperCase();
 
+    const rackNumber =
+      racks[Math.floor(Math.random() * racks.length)];
+
+    const expiry = new Date();
+    expiry.setHours(expiry.getHours() + 72);
+
     const token = new Token({
       tokenId,
-      rackNumber: availableRack
+      rackNumber,
+      expiry
     });
 
     await token.save();
 
     res.json({
-      tokenId
+      tokenId,
+      rackNumber
     });
 
-  } catch (err) {
-
-    console.log(err);
-
+  } catch (error) {
     res.status(500).json({
-      message: "Server Error"
+      message: error.message
     });
-
   }
-
 });
 
-// --------------------
+// ====================
 // Collect Item
-// --------------------
+// ====================
 router.post('/retrieve', async (req, res) => {
-
   try {
 
     const { tokenId } = req.body;
 
     const token = await Token.findOne({
-      tokenId,
-      status: "stored"
+      tokenId
     });
 
     if (!token) {
-      return res.status(400).json({
+      return res.status(404).json({
         message: "Invalid Token"
       });
     }
 
-    const rackNumber = token.rackNumber;
+    if (token.status === "retrieved") {
+      return res.status(400).json({
+        message: "Item already collected"
+      });
+    }
 
-    // Free the rack
     token.status = "retrieved";
     await token.save();
 
     res.json({
-      rackNumber
+      rackNumber: token.rackNumber
     });
 
-  } catch (err) {
-
-    console.log(err);
-
+  } catch (error) {
     res.status(500).json({
-      message: "Server Error"
+      message: error.message
     });
-
   }
-
 });
 
 module.exports = router;
