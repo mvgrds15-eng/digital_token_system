@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Digital Token System</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+padding-top:80px;
+}
+
+button{
+padding:12px 20px;
+font-size:18px;
+margin:10px;
+cursor:pointer;
+}
+
+input{
+padding:10px;
+font-size:16px;
+width:250px;
+}
+
+#result{
+margin-top:20px;
+font-size:18px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🏪 Digital Token System</h1>
+
+<button onclick="deposit()">
+Deposit Item
+</button>
+
+<br><br>
+
+<input
+id="tokenInput"
+placeholder="Enter Token ID">
+
+<button onclick="collect()">
+Collect Item
+</button>
+
+<div id="result"></div>
+
+<script>
+
+const API =
+"https://digital-token-system.onrender.com/api";
+
+async function deposit(){
+
+const response =
+await fetch(
+API + "/store",
+{
+method:"POST"
+}
+);
+
+const data =
+await response.json();
+
+localStorage.setItem(
+"activeToken",
+data.tokenId
+);
+
+document.getElementById(
+"result"
+).innerHTML =
+
+`
+<h3>Item Stored Successfully</h3>
+
+<p>Your Token:</p>
+
+<h2>${data.tokenId}</h2>
+
+<p>
+Save this token to collect
+your item later.
+</p>
+`;
+
+}
+
+async function collect(){
+
+const tokenId =
+document.getElementById(
+"tokenInput"
+).value;
+
+const response =
+await fetch(
+API + "/retrieve",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+tokenId
+})
+}
+);
+
+const data =
+await response.json();
+
+if(data.rackNumber){
+
+document.getElementById(
+"result"
+).innerHTML =
+
+`
+<h3>
+Collect Item From
+Rack ${data.rackNumber}
+</h3>
+`;
+
+}
+else{
+
+document.getElementById(
+"result"
+).innerHTML =
+
+`
+<h3>${data.message}</h3>
+`;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
