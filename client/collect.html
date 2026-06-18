@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Collect Item</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+text-align:center;
+padding-top:60px;
+}
+
+.card{
+width:350px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.15);
+}
+
+input{
+padding:10px;
+width:220px;
+font-size:16px;
+}
+
+button{
+padding:12px 20px;
+margin-top:10px;
+cursor:pointer;
+}
+
+.rack{
+font-size:24px;
+color:blue;
+font-weight:bold;
+}
+
+a{
+display:block;
+margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>📤 Collect Item</h1>
+
+<input
+id="tokenInput"
+placeholder="Enter Token ID">
+
+<br>
+
+<button onclick="checkToken()">
+Search
+</button>
+
+<div id="result"></div>
+
+<a href="index.html">
+⬅ Back Home
+</a>
+
+</div>
+
+<script>
+
+const API =
+"https://digital-token-system.onrender.com/api";
+
+let currentToken = "";
+
+async function checkToken(){
+
+currentToken =
+document.getElementById(
+"tokenInput"
+).value;
+
+const response =
+await fetch(`${API}/check-token`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+tokenId: currentToken
+})
+
+});
+
+const data =
+await response.json();
+
+if(data.message){
+
+document.getElementById(
+"result"
+).innerHTML =
+`<h3>${data.message}</h3>`;
+
+return;
+}
+
+document.getElementById(
+"result"
+).innerHTML =
+
+`
+<h3>Token Found</h3>
+
+<p>Rack</p>
+
+<div class="rack">
+${data.rackNumber}
+</div>
+
+<br>
+
+<button onclick="confirmCollection()">
+Confirm Collection
+</button>
+`;
+
+}
+
+async function confirmCollection(){
+
+const response =
+await fetch(`${API}/retrieve`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+tokenId: currentToken
+})
+
+});
+
+const data =
+await response.json();
+
+document.getElementById(
+"result"
+).innerHTML =
+
+`
+<h3>
+✅ ${data.message}
+</h3>
+`;
+
+}
+
+</script>
+
+</body>
+</html>
